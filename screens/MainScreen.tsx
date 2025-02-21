@@ -4,18 +4,8 @@ import EditNote from './EditTaskScreen'
 import { useStore } from '../store/store'
 import globalStyles from '../styles/global'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-
-interface Task {
-    title: string
-    date: string
-    content: string
-}
-
-interface WithId {
-    id: string
-}
-
-type TaskWithId = Task & WithId
+import Header from '../components/Header/Header'
+import { TaskWithId } from '../types'
 
 const MainScreen: React.FC = () => {
     const { tasks, removeTask, selectTask, selectedTask } = useStore()
@@ -31,22 +21,24 @@ const MainScreen: React.FC = () => {
                 style={globalStyles.container}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                <Text style={styles.header}>Все записи{tasks.length == 0 && "(их нет)"}</Text>
-                <FlatList
-                    data={tasks}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => (
-                        <View style={styles.taskCard}>
-                            <TouchableOpacity style={styles.taskButton} onPress={() => navigateToEditScreen(item)}>
-                                <Text style={styles.taskTitle}>{item.title}</Text>
-                                <Text style={styles.taskDate}>{item.date}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => removeTask(item.id)} style={styles.deleteButton}>
-                                <MaterialCommunityIcons name='delete' color="white" size={20}/>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                />
+                <Header title={`Все записи${tasks.length === 0 ? " (их нет)" : ""}`} />
+                <View style={{flex: 1, marginTop: 10}}>
+                    <FlatList
+                        data={tasks}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <View style={styles.taskCard}>
+                                <TouchableOpacity style={styles.taskButton} onPress={() => navigateToEditScreen(item)}>
+                                    <Text style={styles.taskTitle}>{item.title}</Text>
+                                    <Text style={styles.taskDate}>{item.date}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => removeTask(item.id)} style={styles.deleteButton}>
+                                    <MaterialCommunityIcons name='delete' color="white" size={20}/>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    />
+                </View>
             </KeyboardAvoidingView>
         )
     }

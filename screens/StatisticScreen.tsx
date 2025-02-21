@@ -8,7 +8,7 @@ const screenWidth = Dimensions.get('window').width
 const StatisticsScreen: React.FC = () => {
     const { tasks } = useStore()
     const countTasksByDate = () => {
-        const dateCounts: Record<string, number> = {}
+        const dateCounts: { [date: string]: number } = {}
 
         tasks.forEach((task) => {
             const date = task.date
@@ -33,7 +33,7 @@ const StatisticsScreen: React.FC = () => {
     }
 
 	const chart2Data = {
-		labels: tasks.map((_, index) => `№${index + 1}`), 
+		labels: tasks.map((_, i) => `№${i + 1}`), 
 		datasets: [
 			{
 				data: tasks.map((task) => task.content.length), 
@@ -48,7 +48,7 @@ const StatisticsScreen: React.FC = () => {
             </Text>
             <BarChart
 				data={chart1Data}
-				width={screenWidth - 40} 
+				width={screenWidth} 
 				height={220}
 				yAxisSuffix="" 
 				yAxisLabel=''
@@ -65,14 +65,13 @@ const StatisticsScreen: React.FC = () => {
 					marginVertical: 8,
 					borderRadius: 10,
 				}}
-				fromZero
 			/>
 			<Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center', marginVertical: 20 }}>
 				Количество символов в записях
             </Text>
 			<LineChart
 				data={chart2Data}
-				width={screenWidth - 40}
+				width={screenWidth}
 				height={220}
 				chartConfig={{
 					backgroundGradientFrom: '#ffffff',

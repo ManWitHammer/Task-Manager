@@ -1,14 +1,15 @@
-// src/navigation/BottomTabNavigator.tsx
 import { Ionicons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import CreateTaskScreen from '../screens/CreateTaskScreen'
-import Page1Screen from '../screens/Page1Screen'
+import Page1Screen from '../screens/StatisticScreen'
 import MainScreen from '../screens/MainScreen'
 import { BottomTabParamList } from '../types'
+import { useStore } from '../store/store'
 
 const Tab = createBottomTabNavigator<BottomTabParamList>()
 
 const BottomTabNavigator = () => {
+	const { tasks } = useStore()
 	return (
 		<Tab.Navigator
 			screenOptions={{
@@ -42,16 +43,18 @@ const BottomTabNavigator = () => {
 					headerShown: false
 				}}
 			/>
-			<Tab.Screen
-				name='Page1Tab'
-				component={Page1Screen}
-				options={{
-					title: 'Статистика',
-					tabBarIcon: ({ color, size }) => (
-						<Ionicons name='stats-chart' size={size} color={color} />
-					)
-				}}
-			/>
+			{tasks.length > 0 && (
+				<Tab.Screen
+					name='Page2Tab'
+					component={Page1Screen}
+					options={{
+						title: 'Статистика',
+						tabBarIcon: ({ color, size }) => (
+							<Ionicons name='stats-chart' size={size} color={color} />
+						)
+					}}
+				/>
+			)}
 		</Tab.Navigator>
 	)
 }

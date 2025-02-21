@@ -9,6 +9,18 @@ export interface InputProps {
 	maxLength?: number
 }
 
+export interface Task {
+    title: string
+    date: string
+    content: string
+}
+
+interface WithId {
+    id: string
+}
+
+export type TaskWithId = Task & WithId
+
 export type RootStackParamList = {
 	LoginTab: undefined
 	Page1Tab: undefined

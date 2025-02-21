@@ -3,43 +3,46 @@ import { KeyboardAvoidingView, Platform, View, Text, StyleSheet, ScrollView } fr
 import Button from '../components/Button/Button'
 import Input from '../components/Input/Input'
 import globalStyles from '../styles/global'
+import Header from '../components/Header/Header'
 import { useStore } from '../store/store'
 
 const CreateTaskScreen: React.FC = () => {
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
 	const [time, setTime] = useState('')
-	const { addTask, selectTask } = useStore()
+	const { addTask, errorText } = useStore()
+
+	useEffect(() => {
+		if (errorText) {
+			alert(errorText)
+		}
+	}, [errorText])
 
 	const handleSave = () => {
-		addTask({
+		const res = addTask({
 			id: Math.random().toString(),
 			title,
 			date: time,
 			content,
 		})
-		setTitle('')
-		setContent('')
-		setTime('')
+		if (res) {
+			setTitle('')
+			setContent('')
+			setTime('')
+		}
 	}
 
-	const formatDate = (input: string) => {
-        const cleaned = input.split(".").join("")
+    const handleDateChange = (text: string) => {
+        const cleaned = text.split(".").join("")
         const truncated = cleaned.slice(0, 8)
-
+    
         let formattedDate = ''
-        for (let i = 0; i < truncated.length; i++) {
-            if (i === 2 || i === 4) {
+        truncated.split("").forEach((el, i) => {
+            if (i == 2 || i == 4) {
                 formattedDate += '.'
             }
-            formattedDate += truncated[i]
-        }
-
-        return formattedDate
-    }
-
-    const handleDateChange = (text: string) => {
-        const formattedDate = formatDate(text)
+            formattedDate += el
+        })
         setTime(formattedDate)
     }
 
@@ -47,15 +50,13 @@ const CreateTaskScreen: React.FC = () => {
 		<KeyboardAvoidingView 
 			style={globalStyles.container} 
 			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-			keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Смещение для iOS
+			keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
 		>
 			<ScrollView 
 				contentContainerStyle={styles.scrollContainer}
 				keyboardShouldPersistTaps="handled"
 			>
-				<View style={styles.header}>
-					<Text style={styles.title}>Название записи</Text>
-				</View>
+				<Header title="Название записи"/>
 				<View style={styles.content}>
 					<Input label="Заголовок" value={title} onChangeText={setTitle} />
 					<Input 
@@ -63,9 +64,9 @@ const CreateTaskScreen: React.FC = () => {
 						value={time} 
 						onChangeText={handleDateChange} 
 						keyboardType="numeric"
-						maxLength={10} // Максимальная длина с учетом двоеточия
+						maxLength={10} 
 					/>
-					<View style={styles.textArea}>
+					<View style={{flex: 1}}>
 						<Input label="Текст записи" value={content} onChangeText={setContent} multiline />
 					</View>
 				</View>
@@ -78,20 +79,7 @@ const CreateTaskScreen: React.FC = () => {
 const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
-		paddingBottom: 20, // Добавляет место для прокрутки
-	},
-	header: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		paddingHorizontal: 20,
-		paddingVertical: 10,
-		borderBottomWidth: 1,
-		borderBottomColor: '#ccc',
-	},
-	title: {
-		fontSize: 22,
-		fontWeight: 'bold',
-		color: '#007AFF',
+		paddingBottom: 20, 
 	},
 	date: {
 		fontSize: 14,
@@ -100,10 +88,7 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		paddingVertical: 10,
-	},
-	textArea: {
-		flex: 1
-	},
+	}
 })
 
 export default CreateTaskScreen
